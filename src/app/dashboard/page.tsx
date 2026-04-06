@@ -5,131 +5,239 @@ import { useAppStore } from "@/store/useAppStore";
 import { HealthTestCard } from "@/components/dashboard/HealthTestCard";
 
 export default function DashboardPage() {
-  // Pull state pieces from the Zustand store
-  const { 
-    userRole, 
-    setUserRole, 
-    selectedParcel, 
+  const {
+    userRole,
+    setUserRole,
+    selectedParcel,
     setSelectedParcel,
     landHealthData,
     setLandHealthData
   } = useAppStore();
 
-  // Mock function to simulate clicking on a map parcel
   const handleSimulateSelectParcel = () => {
     setSelectedParcel({ id: "parcel-a", name: "North Valley Field", areaHa: 45.2 });
     setLandHealthData({
       ndviScore: 0.82,
       moistureLevel: 42,
       status: "good",
-      lastUpdated: new Date().toISOString().split('T')[0]
+      lastUpdated: new Date().toISOString().split("T")[0]
     });
   };
 
   return (
-    <div className="mx-auto max-w-6xl flex flex-col gap-8 h-full">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-bold tracking-tight text-white">Overview</h1>
-          <p className="text-zinc-400 text-sm">
-            Welcome back to the KrishiVision platform. You are logged in as a 
-            <span className="font-semibold text-emerald-400 capitalize ml-1">{userRole}</span>.
-          </p>
-        </div>
-        
-        {/* State Management example toggles */}
-        <div className="flex items-center gap-2 glass-panel !rounded-lg p-1">
-          <button 
-            onClick={() => setUserRole("landowner")}
-            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${userRole === 'landowner' ? 'bg-white/10 text-white' : 'text-zinc-400 hover:text-zinc-200'}`}
-          >
-            Owner View
-          </button>
-          <button 
-            onClick={() => setUserRole("consultant")}
-            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${userRole === 'consultant' ? 'bg-emerald-500/20 text-emerald-400' : 'text-zinc-400 hover:text-zinc-200'}`}
-          >
-            Consultant View
-          </button>
-        </div>
-      </div>
+    <div
+      className="min-h-full"
+      style={{
+        background: "linear-gradient(160deg, #0a1a0f 0%, #111c14 60%, #0a1a0f 100%)",
+      }}
+    >
+      {/* Subtle background texture */}
+      <div className="fixed inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1920&q=30')", backgroundSize: "cover", backgroundPosition: "center" }} />
+      {/* Golden glow top */}
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[600px] h-[250px] pointer-events-none" style={{ background: "radial-gradient(ellipse, rgba(212,160,23,0.05) 0%, transparent 70%)" }} />
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        <div className="rounded-xl border border-white/10 bg-black/40 p-6 shadow-sm backdrop-blur-sm">
-          <div className="flex items-center gap-4">
-            <div className="rounded-lg bg-emerald-500/10 p-3 text-emerald-400">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon></svg>
-            </div>
-            <div>
-              <p className="text-sm font-medium text-zinc-400">Selected Parcel</p>
-              <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-white truncate break-words">
-                {selectedParcel ? selectedParcel.name : "None Selected"}
-              </h2>
-            </div>
+      <div className="relative max-w-6xl mx-auto flex flex-col gap-8 p-6 sm:p-8">
+
+        {/* ── Page Header ── */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <div className="flex flex-col gap-1">
+            <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#d4a017" }}>
+              🌾 Farm Intelligence Platform
+            </p>
+            <h1
+              className="text-3xl sm:text-4xl font-bold"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif", color: "#f5f1e6" }}
+            >
+              Overview
+            </h1>
+            <p className="text-sm" style={{ color: "rgba(245,241,230,0.5)" }}>
+              Welcome back. You are logged in as a{" "}
+              <span className="font-semibold capitalize" style={{ color: "#d4a017" }}>{userRole}</span>.
+            </p>
           </div>
-          {selectedParcel && (
-            <div className="mt-4 pt-4 border-t border-white/5 flex gap-4">
-              <div>
-                 <p className="text-xs text-zinc-500">ID</p>
-                 <p className="text-sm font-mono text-zinc-300">{selectedParcel.id}</p>
+
+          {/* View toggle */}
+          <div
+            className="flex items-center gap-1 rounded-full p-1"
+            style={{ background: "rgba(31,61,43,0.5)", border: "1px solid rgba(212,160,23,0.15)" }}
+          >
+            <button
+              onClick={() => setUserRole("landowner")}
+              className="px-4 py-1.5 text-xs font-semibold rounded-full transition-all duration-200"
+              style={{
+                background: userRole === "landowner" ? "rgba(212,160,23,0.2)" : "transparent",
+                color: userRole === "landowner" ? "#d4a017" : "rgba(245,241,230,0.4)",
+                border: userRole === "landowner" ? "1px solid rgba(212,160,23,0.3)" : "1px solid transparent",
+              }}
+            >
+              Owner View
+            </button>
+            <button
+              onClick={() => setUserRole("consultant")}
+              className="px-4 py-1.5 text-xs font-semibold rounded-full transition-all duration-200"
+              style={{
+                background: userRole === "consultant" ? "rgba(212,160,23,0.2)" : "transparent",
+                color: userRole === "consultant" ? "#d4a017" : "rgba(245,241,230,0.4)",
+                border: userRole === "consultant" ? "1px solid rgba(212,160,23,0.3)" : "1px solid transparent",
+              }}
+            >
+              Consultant View
+            </button>
+          </div>
+        </div>
+
+        {/* ── Top Stats Row ── */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+          {/* Selected Parcel Card */}
+          <div
+            className="rounded-2xl p-6 flex flex-col gap-4 transition-all duration-300 hover:-translate-y-1"
+            style={{
+              background: "rgba(31,61,43,0.45)",
+              border: "1px solid rgba(212,160,23,0.15)",
+              backdropFilter: "blur(16px)",
+            }}
+          >
+            <div className="flex items-center gap-3">
+              <div
+                className="h-10 w-10 rounded-xl flex items-center justify-center text-xl"
+                style={{ background: "rgba(212,160,23,0.15)" }}
+              >
+                🗺️
               </div>
               <div>
-                 <p className="text-xs text-zinc-500">Area</p>
-                 <p className="text-sm font-mono text-zinc-300">{selectedParcel.areaHa} Ha</p>
+                <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "rgba(245,241,230,0.4)" }}>
+                  Selected Parcel
+                </p>
+                <h2 className="text-lg font-bold truncate" style={{ color: "#f5f1e6", fontFamily: "'Playfair Display', serif" }}>
+                  {selectedParcel ? selectedParcel.name : "None Selected"}
+                </h2>
               </div>
             </div>
-          )}
-        </div>
-        
-        <div className="rounded-xl border border-white/10 bg-black/40 p-6 shadow-sm backdrop-blur-sm md:col-span-2 flex flex-col justify-center items-center relative overflow-hidden">
-           {landHealthData ? (
-             <div className="w-full flex justify-around items-center z-10">
-                <div className="text-center">
-                  <p className="text-xs text-zinc-400 uppercase tracking-wider mb-1">NDVI Index</p>
-                  <p className="text-3xl font-bold text-white">{landHealthData.ndviScore.toFixed(2)}</p>
+            {selectedParcel && (
+              <div className="flex gap-6 pt-3 border-t" style={{ borderColor: "rgba(212,160,23,0.1)" }}>
+                <div>
+                  <p className="text-xs uppercase tracking-wider mb-0.5" style={{ color: "rgba(245,241,230,0.35)" }}>ID</p>
+                  <p className="text-sm font-mono" style={{ color: "#d4a017" }}>{selectedParcel.id}</p>
                 </div>
-                <div className="text-center">
-                  <p className="text-xs text-zinc-400 uppercase tracking-wider mb-1">Moisture</p>
-                  <p className="text-3xl font-bold text-blue-400">{landHealthData.moistureLevel}%</p>
+                <div>
+                  <p className="text-xs uppercase tracking-wider mb-0.5" style={{ color: "rgba(245,241,230,0.35)" }}>Area</p>
+                  <p className="text-sm font-mono" style={{ color: "#d4a017" }}>{selectedParcel.areaHa} Ha</p>
                 </div>
-                <div className="text-center">
-                  <p className="text-xs text-zinc-400 uppercase tracking-wider mb-1">Status</p>
-                  <span className={`badge-${landHealthData.status} text-sm px-3 py-1`}>
+              </div>
+            )}
+          </div>
+
+          {/* Health Data Card */}
+          <div
+            className="rounded-2xl p-6 md:col-span-2 flex flex-col justify-center items-center relative overflow-hidden transition-all duration-300 hover:-translate-y-1"
+            style={{
+              background: "rgba(31,61,43,0.45)",
+              border: "1px solid rgba(212,160,23,0.15)",
+              backdropFilter: "blur(16px)",
+              minHeight: "120px",
+            }}
+          >
+            {landHealthData ? (
+              <div className="w-full grid grid-cols-3 gap-4 z-10">
+                <div className="text-center p-4 rounded-xl" style={{ background: "rgba(212,160,23,0.08)" }}>
+                  <p className="text-xs uppercase tracking-widest mb-2" style={{ color: "rgba(245,241,230,0.4)" }}>NDVI Index</p>
+                  <p className="text-3xl font-bold" style={{ fontFamily: "'Playfair Display', serif", color: "#d4a017" }}>
+                    {landHealthData.ndviScore.toFixed(2)}
+                  </p>
+                </div>
+                <div className="text-center p-4 rounded-xl" style={{ background: "rgba(59,130,246,0.08)" }}>
+                  <p className="text-xs uppercase tracking-widest mb-2" style={{ color: "rgba(245,241,230,0.4)" }}>Moisture</p>
+                  <p className="text-3xl font-bold text-blue-400" style={{ fontFamily: "'Playfair Display', serif" }}>
+                    {landHealthData.moistureLevel}%
+                  </p>
+                </div>
+                <div className="text-center p-4 rounded-xl" style={{ background: "rgba(16,185,129,0.08)" }}>
+                  <p className="text-xs uppercase tracking-widest mb-2" style={{ color: "rgba(245,241,230,0.4)" }}>Status</p>
+                  <span className={`badge-${landHealthData.status} text-sm px-4 py-1.5`}>
                     {landHealthData.status.toUpperCase()}
                   </span>
                 </div>
-             </div>
-           ) : (
-              <div className="text-center z-10">
-                <p className="text-zinc-400 mb-4">No health data available. Select a parcel from the map.</p>
-                <button onClick={handleSimulateSelectParcel} className="btn-secondary text-sm h-9 px-4">
-                  Simulate Parcel Selection
+              </div>
+            ) : (
+              <div className="text-center z-10 flex flex-col items-center gap-4">
+                <p className="text-sm" style={{ color: "rgba(245,241,230,0.45)" }}>
+                  No health data available. Select a parcel from the map.
+                </p>
+                <button
+                  onClick={handleSimulateSelectParcel}
+                  className="rounded-full px-6 py-2.5 text-sm font-semibold transition-all duration-200 hover:scale-105"
+                  style={{
+                    background: "linear-gradient(135deg, #d4a017, #b8860b)",
+                    color: "white",
+                    boxShadow: "0 4px 20px rgba(212,160,23,0.3)",
+                  }}
+                >
+                  🌾 Simulate Parcel Selection
                 </button>
               </div>
-           )}
-           
-           {/* Background glow if health data is good */}
-           {landHealthData?.status === 'good' && (
-             <div className="absolute inset-0 bg-emerald-500/5 blur-3xl rounded-full" />
-           )}
-        </div>
-      </div>
-
-          {/* Main Map Empty Area */}
-      <div className="flex-1 min-h-[400px] rounded-xl border border-white/10 bg-black/20 relative overflow-hidden flex flex-col items-center justify-center text-zinc-500 mb-6">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-        <div className="z-10 flex flex-col items-center gap-4 text-center px-4 max-w-sm glass-panel p-6">
-          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="text-zinc-400"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
-          <div>
-            <h3 className="text-lg font-medium text-white mb-2">Awaiting Module Connection</h3>
-            <p className="text-sm">The dashboard listens to Zustand state automatically. When the map is instantiated in this view, parcel highlights will bind to globally selected data synchronously.</p>
+            )}
+            {landHealthData?.status === "good" && (
+              <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, rgba(16,185,129,0.06) 0%, transparent 60%)" }} />
+            )}
           </div>
         </div>
-      </div>
-      
-      {/* Additional UI Testing Row */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-         <HealthTestCard />
+
+        {/* ── Map Preview Panel ── */}
+        <div
+          className="flex-1 min-h-[380px] rounded-3xl relative overflow-hidden flex flex-col items-center justify-center"
+          style={{
+            background: "rgba(10,26,15,0.6)",
+            border: "1px solid rgba(212,160,23,0.12)",
+            backdropFilter: "blur(12px)",
+          }}
+        >
+          <div
+            className="absolute inset-0 opacity-10"
+            style={{
+              backgroundImage: "linear-gradient(to right, rgba(212,160,23,0.15) 1px, transparent 1px), linear-gradient(to bottom, rgba(212,160,23,0.15) 1px, transparent 1px)",
+              backgroundSize: "32px 32px",
+            }}
+          />
+          <div
+            className="z-10 flex flex-col items-center gap-5 text-center px-4 max-w-sm rounded-3xl p-8"
+            style={{
+              background: "rgba(31,61,43,0.55)",
+              border: "1px solid rgba(212,160,23,0.15)",
+              backdropFilter: "blur(16px)",
+            }}
+          >
+            <div className="text-5xl">🌿</div>
+            <div>
+              <h3
+                className="text-xl font-bold mb-2"
+                style={{ fontFamily: "'Playfair Display', serif", color: "#f5f1e6" }}
+              >
+                Awaiting Module Connection
+              </h3>
+              <p className="text-sm leading-relaxed" style={{ color: "rgba(245,241,230,0.45)" }}>
+                The dashboard listens to Zustand state automatically. When the map is instantiated,
+                parcel highlights will bind to globally selected data synchronously.
+              </p>
+            </div>
+            <a
+              href="/map"
+              className="rounded-full px-6 py-2.5 text-sm font-semibold transition-all duration-200 hover:scale-105"
+              style={{
+                background: "linear-gradient(135deg, #d4a017, #b8860b)",
+                color: "white",
+                boxShadow: "0 4px 20px rgba(212,160,23,0.3)",
+              }}
+            >
+              🗺️ Open Live Map
+            </a>
+          </div>
+        </div>
+
+        {/* ── Health Test Card ── */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <HealthTestCard />
+        </div>
       </div>
     </div>
   );

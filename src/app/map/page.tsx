@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import MapWrapper from "@/components/MapWrapper";
@@ -22,7 +24,7 @@ export default function MapPage() {
             >
               Interactive Intelligence Map
             </h1>
-            <p className="text-sm sm:text-base leading-relaxed" style={{ color: "rgba(245,241,230,0.5)" }}>
+            <p className="text-sm sm:text-base leading-relaxed" style={{ color: "rgba(246,243,235,0.5)" }}>
               Explore structural bounds and simulated NDVI geographic models. Select a land parcel to inspect localized terrain indexing.
             </p>
           </div>
@@ -45,7 +47,7 @@ export default function MapPage() {
           </div>
         </div>
         
-        {/* Map Box rendered tightly and flawlessly rounded on huge screens */}
+        {/* Map Box */}
         <div className="flex-1 w-full min-h-0 relative z-0 rounded-t-2xl sm:rounded-t-[32px] overflow-hidden border border-white/10 bg-zinc-900 shadow-[0_-8px_30px_-15px_rgba(0,0,0,0.5)]">
           <MapWrapper />
         </div>

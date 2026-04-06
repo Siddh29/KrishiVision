@@ -1,87 +1,111 @@
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
 
-/* Design System - Tailwind v4 unified theme */
+/* =====================================================
+   KrishiVision Design System — Premium Agri Aesthetic
+   ===================================================== */
+
 @theme {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-mono: ui-monospace, monospace;
 
-  /* Functional Colors for Agricultural Analytics */
-  --color-health-good: #10b981;       /* Healthy crop, optimal moisture (Emerald 500) */
-  --color-health-warning: #f59e0b;    /* Stress, low soil moisture (Amber 500) */
-  --color-health-critical: #ef4444;   /* Blight, extreme drought (Red 500) */
-  
-  /* Brand Constants */
-  --color-brand-primary: #10b981;     /* KrishiVision primary color */
-  --color-brand-surface: #09090b;     /* Ultra dark default surface (Zinc 950) */
-  --color-surface-panel: rgba(24, 24, 27, 0.4); /* Glassmorphic generic */
+  /* Agriculture Color Palette */
+  --color-forest:       #1f3d2b;
+  --color-forest-light: #2d5c40;
+  --color-soil:         #5a3e2b;
+  --color-soil-light:   #7a5540;
+  --color-golden:       #d4a017;
+  --color-golden-light: #e8b820;
+  --color-cream:        #f5f1e6;
+  --color-cream-dark:   #ede8d8;
 
-  /* Extra spacing tokens if needed can be mapped here */
+  /* Legacy brand tokens kept for dashboard compat */
+  --color-health-good:     #10b981;
+  --color-health-warning:  #f59e0b;
+  --color-health-critical: #ef4444;
+  --color-brand-primary:   #10b981;
+  --color-brand-surface:   #09090b;
+  --color-surface-panel:   rgba(24, 24, 27, 0.4);
 }
 
 @layer base {
   :root {
-    --background: #ffffff;
-    --foreground: #09090b;
+    --background: #0a1a0f;
+    --foreground: #f5f1e6;
   }
-  /* Explicit dark mode forcing as per initial setup architecture */
-  .dark {
-    --background: #09090b;
-    --foreground: #fafafa;
-  }
-  
+
   body {
     background-color: var(--background);
     color: var(--foreground);
-    @apply antialiased font-sans flex flex-col min-h-screen text-base;
+    @apply antialiased font-sans min-h-screen;
   }
-  
-  /* Smooth scrolling globally except when users prefer reduced motion */
+
+  /* Smooth scrolling */
   @media (prefers-reduced-motion: no-preference) {
-    html {
-      scroll-behavior: smooth;
-    }
+    html { scroll-behavior: smooth; }
   }
+
+  /* Google Fonts */
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap');
 }
 
 @layer components {
-  /* 
-    Reusable UI Elements
-    Mobile-first approach: minimal padding/scaling on default, 
-    scaling up for (sm, md, lg) viewports implicitly.
-  */
 
-  /* Dashboard structural shell */
+  /* ---- Layout ---- */
   .app-container {
     @apply w-full mx-auto px-4 sm:px-6 lg:px-8 max-w-screen-2xl;
   }
 
-  /* Glassmorphism panel for analytical cards */
+  /* ---- Glass cards ---- */
+  .glass-card {
+    background: rgba(31, 61, 43, 0.35);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(212, 160, 23, 0.15);
+    @apply rounded-2xl shadow-2xl;
+  }
+
   .glass-panel {
     @apply rounded-xl border border-white/10 bg-black/40 backdrop-blur-md shadow-lg transition-colors hover:bg-black/50 overflow-hidden relative;
   }
 
-  /* Typography primitives */
+  /* ---- Buttons ---- */
+  .btn-primary {
+    background: linear-gradient(135deg, #d4a017, #b8860b);
+    @apply inline-flex h-12 items-center justify-center rounded-full px-8 font-semibold text-white shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-golden/40 active:scale-95;
+  }
+
+  .btn-secondary {
+    background: rgba(245, 241, 230, 0.08);
+    border: 1px solid rgba(245, 241, 230, 0.25);
+    @apply inline-flex h-12 items-center justify-center rounded-full px-8 font-medium text-cream backdrop-blur-md transition-all duration-300 hover:bg-cream/15 active:scale-95;
+  }
+
+  .btn-forest {
+    background: linear-gradient(135deg, #1f3d2b, #2d5c40);
+    @apply inline-flex h-12 items-center justify-center rounded-full px-8 font-semibold text-cream shadow-xl transition-all duration-300 hover:scale-105 active:scale-95;
+  }
+
+  /* ---- Typography ---- */
+  .heading-hero {
+    font-family: 'Playfair Display', Georgia, serif;
+    @apply font-bold tracking-tight leading-tight;
+  }
   .heading-1 {
-    @apply text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white to-zinc-400;
+    font-family: 'Playfair Display', Georgia, serif;
+    @apply text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-cream;
   }
   .heading-2 {
-    @apply text-2xl sm:text-3xl font-semibold tracking-tight text-white;
+    font-family: 'Playfair Display', Georgia, serif;
+    @apply text-2xl sm:text-3xl font-semibold tracking-tight text-cream;
   }
   .text-muted {
-    @apply text-sm sm:text-base text-zinc-400 leading-relaxed;
+    @apply text-sm sm:text-base leading-relaxed;
+    color: rgba(245, 241, 230, 0.6);
   }
 
-  /* Core Buttons */
-  .btn-primary {
-    @apply inline-flex h-10 sm:h-12 items-center justify-center rounded-lg bg-health-good px-6 sm:px-8 font-medium text-white shadow-lg shadow-health-good/25 transition-all hover:brightness-110 active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
-  }
-  
-  .btn-secondary {
-    @apply inline-flex h-10 sm:h-12 items-center justify-center rounded-lg border border-white/10 bg-white/5 backdrop-blur-sm px-6 sm:px-8 font-medium text-white transition-all hover:bg-white/10 active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
-  }
-
-  /* Status Badges */
+  /* ---- Status Badges ---- */
   .badge-good {
     @apply inline-flex items-center rounded-full border border-health-good/30 bg-health-good/10 px-2.5 py-0.5 text-xs font-medium text-health-good backdrop-blur-sm;
   }
@@ -90,5 +114,38 @@
   }
   .badge-critical {
     @apply inline-flex items-center rounded-full border border-health-critical/30 bg-health-critical/10 px-2.5 py-0.5 text-xs font-medium text-health-critical backdrop-blur-sm;
+  }
+
+  /* ---- Section styles ---- */
+  .section-nature {
+    background: linear-gradient(180deg, #0a1a0f 0%, #1f3d2b 50%, #0a1a0f 100%);
+    @apply relative overflow-hidden;
+  }
+
+  /* ---- Stat cards ---- */
+  .stat-card {
+    background: rgba(31, 61, 43, 0.4);
+    border: 1px solid rgba(212, 160, 23, 0.2);
+    backdrop-filter: blur(12px);
+    @apply rounded-2xl p-6 text-center transition-all duration-300 hover:scale-105 hover:border-golden/50 cursor-default;
+  }
+
+  /* ---- Feature cards ---- */
+  .feature-card {
+    background: rgba(31, 61, 43, 0.3);
+    border: 1px solid rgba(245, 241, 230, 0.08);
+    backdrop-filter: blur(12px);
+    @apply rounded-3xl p-6 sm:p-8 transition-all duration-500 hover:-translate-y-2 hover:border-golden/30 hover:shadow-2xl overflow-hidden relative;
+  }
+
+  /* ---- Scroll fade animation ---- */
+  .fade-in-up {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-in-up.visible {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

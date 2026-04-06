@@ -19,8 +19,12 @@ interface AppState {
   // App UI State
   isSidebarOpen: boolean;
   toggleSidebar: () => void;
-  activeMapLayer: string;
-  setActiveMapLayer: (layer: string) => void;
+  mapLayers: {
+    boundary: boolean;
+    ndvi: boolean;
+    terrain: boolean;
+  };
+  toggleMapLayer: (layer: keyof AppState['mapLayers']) => void;
   
   // Application Data State
   userRole: UserRole;
@@ -37,8 +41,17 @@ export const useAppStore = create<AppState>((set) => ({
   // App UI State
   isSidebarOpen: false,
   toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
-  activeMapLayer: 'satellite',
-  setActiveMapLayer: (layer) => set({ activeMapLayer: layer }),
+  mapLayers: {
+    boundary: true,
+    ndvi: false,
+    terrain: false,
+  },
+  toggleMapLayer: (layer) => set((state) => ({
+    mapLayers: {
+      ...state.mapLayers,
+      [layer]: !state.mapLayers[layer]
+    }
+  })),
   
   // Application Data State
   userRole: 'landowner',

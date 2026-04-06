@@ -1,96 +1,93 @@
 "use client";
 
 import Link from "next/link";
-import React from "react";
 import { usePathname } from "next/navigation";
+import { useAppStore } from "@/store/useAppStore";
+
+const navItems = [
+  { name: "Overview",   path: "/dashboard",           icon: "🏡" },
+  { name: "Maps",       path: "/map",                 icon: "🗺️" },
+  { name: "Analytics",  path: "/dashboard/analytics", icon: "📊" },
+];
 
 export function Sidebar() {
   const pathname = usePathname();
-
-  const links = [
-    {
-      name: "Overview",
-      href: "/dashboard",
-      emoji: "🌾",
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
-      )
-    },
-    {
-      name: "Maps",
-      href: "/map",
-      emoji: "🗺️",
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" x2="9" y1="3" y2="18"></line><line x1="15" x2="15" y1="6" y2="21"></line></svg>
-      )
-    },
-    {
-      name: "Analytics",
-      href: "/dashboard/analytics",
-      emoji: "📊",
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
-      )
-    }
-  ];
+  const userRole = useAppStore((state) => state.userRole);
 
   return (
-    <aside
-      className="hidden w-64 flex-col md:flex"
-      style={{
-        background: "rgba(10,26,15,0.85)",
+    <aside 
+      className="w-72 h-screen fixed left-0 top-0 z-40 flex flex-col border-r transition-all duration-500 overflow-hidden"
+      style={{ 
+        background: "rgba(13,31,18,0.95)",
+        borderColor: "rgba(212,160,23,0.1)",
         backdropFilter: "blur(20px)",
-        borderRight: "1px solid rgba(212,160,23,0.12)",
       }}
     >
-      {/* Brand mark inside sidebar */}
-      <div className="px-5 py-5 border-b" style={{ borderColor: "rgba(212,160,23,0.1)" }}>
-        <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full animate-pulse" style={{ background: "#d4a017" }} />
-          <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: "rgba(245,241,230,0.4)" }}>
+      {/* Sidebar Header/Logo area */}
+      <div className="p-8 pb-4">
+        <div className="flex flex-col gap-1 mb-8">
+          <p className="text-[10px] font-bold uppercase tracking-[0.3em]" style={{ color: "#d4a017" }}>
             Farm Intelligence
-          </span>
+          </p>
+          <h2 className="text-2xl font-bold" style={{ fontFamily: "'Cormorant Garamond', serif", color: "#f6f3eb" }}>
+            Krishi<span style={{ color: "#d4a017" }}>Vision</span>
+          </h2>
         </div>
-      </div>
 
-      {/* Navigation */}
-      <div className="flex-1 overflow-y-auto py-4">
-        <nav className="space-y-1 px-3 text-sm font-medium">
-          {links.map((link) => {
-            const isActive = pathname === link.href || pathname?.startsWith(`${link.href}/`);
+        <nav className="flex flex-col gap-3">
+          {navItems.map((item) => {
+            const isActive = pathname === item.path;
             return (
               <Link
-                key={link.name}
-                href={link.href}
-                className="flex items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-200"
+                key={item.path}
+                href={item.path}
+                className="group flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300"
                 style={{
-                  background: isActive ? "rgba(212,160,23,0.15)" : "transparent",
+                  background: isActive ? "rgba(212,160,23,0.12)" : "transparent",
                   border: isActive ? "1px solid rgba(212,160,23,0.25)" : "1px solid transparent",
-                  color: isActive ? "#d4a017" : "rgba(245,241,230,0.5)",
                 }}
               >
-                <span style={{ color: isActive ? "#d4a017" : "rgba(245,241,230,0.4)" }}>{link.icon}</span>
-                <span>{link.emoji} {link.name}</span>
+                <span className={`text-xl transition-transform duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-110 opacity-60 group-hover:opacity-100'}`}>
+                  {item.icon}
+                </span>
+                <span 
+                  className="text-sm font-semibold tracking-wide"
+                  style={{ 
+                    color: isActive ? "#d4a017" : "rgba(246,243,235,0.5)",
+                    fontFamily: "'DM Sans', sans-serif"
+                  }}
+                >
+                  {item.name}
+                </span>
+                {isActive && (
+                  <div className="ml-auto w-1.5 h-1.5 rounded-full" style={{ background: "#d4a017", boxShadow: "0 0 10px #d4a017" }} />
+                )}
               </Link>
             );
           })}
         </nav>
       </div>
 
-      {/* Bottom settings */}
-      <div className="border-t p-4" style={{ borderColor: "rgba(212,160,23,0.1)" }}>
-        <div
-          className="flex items-center gap-3 rounded-xl px-3 py-2.5 cursor-pointer transition-all duration-200"
-          style={{ color: "rgba(245,241,230,0.4)" }}
-        >
-          <div
-            className="h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold"
-            style={{ background: "rgba(212,160,23,0.15)", border: "1px solid rgba(212,160,23,0.25)", color: "#d4a017" }}
-          >
-            N
+      <div className="mt-auto p-8 flex flex-col gap-6">
+        {/* User Card */}
+        <div className="p-5 rounded-2xl flex items-center gap-4 border" style={{ background: "rgba(246,243,235,0.03)", borderColor: "rgba(246,243,235,0.08)" }}>
+          <div className="w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold" style={{ background: "linear-gradient(135deg, #d4a017, #8b6b11)", color: "#fff" }}>
+            {userRole?.[0] || 'U'}
           </div>
-          <span className="text-sm">Settings</span>
+          <div className="flex flex-col">
+            <span className="text-xs font-bold uppercase tracking-wider" style={{ color: "rgba(246,243,235,0.4)" }}>Account</span>
+            <span className="text-sm font-semibold text-[#f6f3eb] capitalize">{userRole}</span>
+          </div>
         </div>
+
+        <Link 
+          href="#" 
+          className="flex items-center gap-4 px-5 py-3 rounded-xl transition-colors hover:bg-white/[0.05]"
+          style={{ color: "rgba(246,243,235,0.5)" }}
+        >
+          <span className="text-xl">⚙️</span>
+          <span className="text-sm font-medium">Settings</span>
+        </Link>
       </div>
     </aside>
   );

@@ -1,151 +1,159 @@
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap');
 
 /* =====================================================
-   KrishiVision Design System — Premium Agri Aesthetic
+   KrishiVision — Pinterest Nature · Luxury Agritech
    ===================================================== */
 
 @theme {
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
-  --font-serif: 'Playfair Display', Georgia, serif;
-  --font-mono: ui-monospace, monospace;
+  --font-sans:  'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-mono:  ui-monospace, monospace;
 
-  /* Agriculture Color Palette */
+  /* Pinterest Nature Palette */
   --color-forest:       #1f3d2b;
-  --color-forest-light: #2d5c40;
-  --color-soil:         #5a3e2b;
-  --color-soil-light:   #7a5540;
-  --color-golden:       #d4a017;
-  --color-golden-light: #e8b820;
-  --color-cream:        #f5f1e6;
+  --color-forest-mid:   #2d5a3d;
+  --color-forest-light: #3d7a52;
+  --color-gold:         #d4a017;
+  --color-gold-light:   #e8b93a;
+  --color-soil:         #6b4f3b;
+  --color-cream:        #f6f3eb;
   --color-cream-dark:   #ede8d8;
+  --color-parchment:    #faf8f2;
 
-  /* Legacy brand tokens kept for dashboard compat */
+  /* Legacy dashboard compat */
   --color-health-good:     #10b981;
   --color-health-warning:  #f59e0b;
   --color-health-critical: #ef4444;
-  --color-brand-primary:   #10b981;
-  --color-brand-surface:   #09090b;
-  --color-surface-panel:   rgba(24, 24, 27, 0.4);
+  --color-brand-primary:   #d4a017;
+  --color-brand-surface:   #0d1f12;
+  --color-surface-panel:   rgba(31,61,43,0.4);
 }
 
 @layer base {
-  :root {
-    --background: #0a1a0f;
-    --foreground: #f5f1e6;
-  }
-
+  :root { --background: #0d1f12; --foreground: #f6f3eb; }
   body {
     background-color: var(--background);
     color: var(--foreground);
-    @apply antialiased font-sans min-h-screen;
+    @apply antialiased min-h-screen;
+    font-family: 'DM Sans', ui-sans-serif, sans-serif;
   }
-
-  /* Smooth scrolling */
   @media (prefers-reduced-motion: no-preference) {
     html { scroll-behavior: smooth; }
   }
-
-  /* Google Fonts */
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap');
 }
 
 @layer components {
-
   /* ---- Layout ---- */
-  .app-container {
-    @apply w-full mx-auto px-4 sm:px-6 lg:px-8 max-w-screen-2xl;
-  }
+  .app-container { @apply w-full mx-auto px-4 sm:px-6 lg:px-8 max-w-screen-2xl; }
 
-  /* ---- Glass cards ---- */
+  /* ---- Glass panels ---- */
   .glass-card {
-    background: rgba(31, 61, 43, 0.35);
+    background: rgba(31,61,43,0.45);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(212,160,23,0.18);
+    @apply rounded-3xl shadow-2xl;
+  }
+  .glass-panel {
+    background: rgba(31,61,43,0.35);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(212, 160, 23, 0.15);
-    @apply rounded-2xl shadow-2xl;
+    border: 1px solid rgba(246,243,235,0.08);
+    @apply rounded-2xl shadow-lg;
   }
-
-  .glass-panel {
-    @apply rounded-xl border border-white/10 bg-black/40 backdrop-blur-md shadow-lg transition-colors hover:bg-black/50 overflow-hidden relative;
+  .glass-cream {
+    background: rgba(246,243,235,0.08);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(246,243,235,0.15);
+    @apply rounded-2xl;
   }
 
   /* ---- Buttons ---- */
-  .btn-primary {
-    background: linear-gradient(135deg, #d4a017, #b8860b);
-    @apply inline-flex h-12 items-center justify-center rounded-full px-8 font-semibold text-white shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-golden/40 active:scale-95;
+  .btn-gold {
+    background: linear-gradient(135deg, #d4a017 0%, #c49010 100%);
+    box-shadow: 0 8px 32px rgba(212,160,23,0.35);
+    @apply inline-flex h-12 items-center justify-center rounded-full px-8 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-gold/50 active:scale-95;
   }
-
-  .btn-secondary {
-    background: rgba(245, 241, 230, 0.08);
-    border: 1px solid rgba(245, 241, 230, 0.25);
-    @apply inline-flex h-12 items-center justify-center rounded-full px-8 font-medium text-cream backdrop-blur-md transition-all duration-300 hover:bg-cream/15 active:scale-95;
+  .btn-outline-cream {
+    background: rgba(246,243,235,0.07);
+    border: 1.5px solid rgba(246,243,235,0.3);
+    @apply inline-flex h-12 items-center justify-center rounded-full px-8 font-medium text-[#f6f3eb] backdrop-blur-md transition-all duration-300 hover:bg-[rgba(246,243,235,0.14)] active:scale-95;
   }
-
   .btn-forest {
-    background: linear-gradient(135deg, #1f3d2b, #2d5c40);
-    @apply inline-flex h-12 items-center justify-center rounded-full px-8 font-semibold text-cream shadow-xl transition-all duration-300 hover:scale-105 active:scale-95;
+    background: linear-gradient(135deg,#1f3d2b,#2d5a3d);
+    @apply inline-flex h-12 items-center justify-center rounded-full px-8 font-semibold text-[#f6f3eb] shadow-xl transition-all duration-300 hover:scale-105 active:scale-95;
   }
 
   /* ---- Typography ---- */
-  .heading-hero {
-    font-family: 'Playfair Display', Georgia, serif;
+  .heading-serif { font-family: 'Cormorant Garamond', Georgia, serif; }
+  .heading-hero  {
+    font-family: 'Cormorant Garamond', Georgia, serif;
     @apply font-bold tracking-tight leading-tight;
+    letter-spacing: -0.02em;
   }
   .heading-1 {
-    font-family: 'Playfair Display', Georgia, serif;
-    @apply text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-cream;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    @apply text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight;
   }
   .heading-2 {
-    font-family: 'Playfair Display', Georgia, serif;
-    @apply text-2xl sm:text-3xl font-semibold tracking-tight text-cream;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    @apply text-2xl sm:text-3xl font-semibold tracking-tight;
+    color: #f6f3eb;
   }
-  .text-muted {
-    @apply text-sm sm:text-base leading-relaxed;
-    color: rgba(245, 241, 230, 0.6);
-  }
+  .text-muted { color: rgba(246,243,235,0.55); @apply text-sm sm:text-base leading-relaxed; }
 
-  /* ---- Status Badges ---- */
-  .badge-good {
-    @apply inline-flex items-center rounded-full border border-health-good/30 bg-health-good/10 px-2.5 py-0.5 text-xs font-medium text-health-good backdrop-blur-sm;
+  /* ---- Pinterest Masonry ---- */
+  .masonry-grid {
+    columns: 2;
+    column-gap: 1rem;
   }
-  .badge-warning {
-    @apply inline-flex items-center rounded-full border border-health-warning/30 bg-health-warning/10 px-2.5 py-0.5 text-xs font-medium text-health-warning backdrop-blur-sm;
+  @media (min-width: 768px) { .masonry-grid { columns: 3; } }
+  @media (min-width: 1024px) { .masonry-grid { columns: 4; } }
+  .masonry-item {
+    break-inside: avoid;
+    margin-bottom: 1rem;
+    @apply overflow-hidden rounded-2xl relative group cursor-pointer;
   }
-  .badge-critical {
-    @apply inline-flex items-center rounded-full border border-health-critical/30 bg-health-critical/10 px-2.5 py-0.5 text-xs font-medium text-health-critical backdrop-blur-sm;
+  .masonry-item img {
+    @apply w-full object-cover transition-transform duration-700 group-hover:scale-110;
   }
-
-  /* ---- Section styles ---- */
-  .section-nature {
-    background: linear-gradient(180deg, #0a1a0f 0%, #1f3d2b 50%, #0a1a0f 100%);
-    @apply relative overflow-hidden;
+  .masonry-overlay {
+    @apply absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-end p-4;
+    background: linear-gradient(0deg, rgba(31,61,43,0.85) 0%, transparent 60%);
   }
 
   /* ---- Stat cards ---- */
   .stat-card {
-    background: rgba(31, 61, 43, 0.4);
-    border: 1px solid rgba(212, 160, 23, 0.2);
-    backdrop-filter: blur(12px);
-    @apply rounded-2xl p-6 text-center transition-all duration-300 hover:scale-105 hover:border-golden/50 cursor-default;
+    background: rgba(31,61,43,0.5);
+    border: 1px solid rgba(212,160,23,0.2);
+    backdrop-filter: blur(16px);
+    @apply rounded-3xl p-6 sm:p-8 text-center transition-all duration-400 hover:scale-105 hover:border-gold/50 cursor-default;
   }
 
   /* ---- Feature cards ---- */
   .feature-card {
-    background: rgba(31, 61, 43, 0.3);
-    border: 1px solid rgba(245, 241, 230, 0.08);
-    backdrop-filter: blur(12px);
-    @apply rounded-3xl p-6 sm:p-8 transition-all duration-500 hover:-translate-y-2 hover:border-golden/30 hover:shadow-2xl overflow-hidden relative;
+    background: rgba(31,61,43,0.35);
+    border: 1px solid rgba(246,243,235,0.07);
+    backdrop-filter: blur(14px);
+    @apply rounded-3xl p-6 sm:p-8 transition-all duration-500 hover:-translate-y-2 hover:border-gold/30 overflow-hidden relative;
   }
 
-  /* ---- Scroll fade animation ---- */
-  .fade-in-up {
-    opacity: 0;
-    transform: translateY(32px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
+  /* ---- Dashboard cards ---- */
+  .dash-card {
+    background: rgba(31,61,43,0.5);
+    border: 1px solid rgba(212,160,23,0.14);
+    backdrop-filter: blur(20px);
+    @apply rounded-2xl transition-all duration-300 hover:-translate-y-1;
   }
-  .fade-in-up.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
+
+  /* ---- Scroll fade ---- */
+  .fade-up { opacity: 0; transform: translateY(28px); transition: opacity 0.75s ease, transform 0.75s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  /* ---- Status badges ---- */
+  .badge-good     { @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-bold; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); color:#10b981; }
+  .badge-warning  { @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-bold; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); color:#f59e0b; }
+  .badge-critical { @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-bold; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#ef4444; }
 }

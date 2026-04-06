@@ -124,24 +124,27 @@ export default function AnalyticsPage() {
           </div>
 
           {/* Bar Chart */}
-          <div className="flex items-end gap-3 h-40">
+          <div className="flex items-end gap-3 h-64 sm:h-80 pt-10">
             {monthlyYield.map((m, i) => {
-              const h = (m.value / maxYield) * 100;
+              const h = (m.value / 100) * 100; // Scaled to 100 max for better visual range
               const isLast = i === monthlyYield.length - 1;
               return (
-                <div key={i} className="flex-1 flex flex-col items-center gap-2 group">
-                  <span className="text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: "#d4a017" }}>
+                <div key={i} className="flex-1 h-full flex flex-col justify-end items-center gap-3 group">
+                  <span className="text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: "#d4a017" }}>
                     {m.value}%
                   </span>
-                  <div className="w-full rounded-t-xl transition-all duration-300 hover:scale-y-105 origin-bottom" style={{
-                    height: `${h}%`,
-                    background: isLast
-                      ? "linear-gradient(180deg, #d4a017, #b8860b)"
-                      : "rgba(212,160,23,0.3)",
-                    border: isLast ? "1px solid rgba(212,160,23,0.6)" : "1px solid rgba(212,160,23,0.15)",
-                    minHeight: "12px",
-                  }} />
-                  <span className="text-xs font-medium" style={{ color: "rgba(245,241,230,0.45)" }}>{m.month}</span>
+                  <div 
+                    className="w-full rounded-t-2xl transition-all duration-500 hover:brightness-125 origin-bottom" 
+                    style={{
+                      height: `${m.value}%`,
+                      background: isLast
+                        ? "linear-gradient(180deg, #d4a017 0%, #8b6b11 100%)"
+                        : "rgba(212,160,23,0.25)",
+                      border: `1px solid ${isLast ? "rgba(212,160,23,0.6)" : "rgba(212,160,23,0.15)"}`,
+                      boxShadow: isLast ? "0 0 30px rgba(212,160,23,0.15)" : "none",
+                    }} 
+                  />
+                  <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "rgba(246,243,235,0.4)" }}>{m.month}</span>
                 </div>
               );
             })}

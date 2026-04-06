@@ -18,7 +18,7 @@ export default function MapPage() {
             </p>
             <h1
               className="text-3xl sm:text-4xl font-bold mb-2"
-              style={{ fontFamily: "'Playfair Display', Georgia, serif", color: "#f5f1e6" }}
+              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", color: "#f6f3eb" }}
             >
               Interactive Intelligence Map
             </h1>

@@ -1,26 +1,94 @@
 @import "tailwindcss";
+@import "maplibre-gl/dist/maplibre-gl.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Design System - Tailwind v4 unified theme */
+@theme {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* Functional Colors for Agricultural Analytics */
+  --color-health-good: #10b981;       /* Healthy crop, optimal moisture (Emerald 500) */
+  --color-health-warning: #f59e0b;    /* Stress, low soil moisture (Amber 500) */
+  --color-health-critical: #ef4444;   /* Blight, extreme drought (Red 500) */
+  
+  /* Brand Constants */
+  --color-brand-primary: #10b981;     /* KrishiVision primary color */
+  --color-brand-surface: #09090b;     /* Ultra dark default surface (Zinc 950) */
+  --color-surface-panel: rgba(24, 24, 27, 0.4); /* Glassmorphic generic */
+
+  /* Extra spacing tokens if needed can be mapped here */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #ffffff;
+    --foreground: #09090b;
+  }
+  /* Explicit dark mode forcing as per initial setup architecture */
+  .dark {
+    --background: #09090b;
+    --foreground: #fafafa;
+  }
+  
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    @apply antialiased font-sans flex flex-col min-h-screen text-base;
+  }
+  
+  /* Smooth scrolling globally except when users prefer reduced motion */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  /* 
+    Reusable UI Elements
+    Mobile-first approach: minimal padding/scaling on default, 
+    scaling up for (sm, md, lg) viewports implicitly.
+  */
+
+  /* Dashboard structural shell */
+  .app-container {
+    @apply w-full mx-auto px-4 sm:px-6 lg:px-8 max-w-screen-2xl;
+  }
+
+  /* Glassmorphism panel for analytical cards */
+  .glass-panel {
+    @apply rounded-xl border border-white/10 bg-black/40 backdrop-blur-md shadow-lg transition-colors hover:bg-black/50 overflow-hidden relative;
+  }
+
+  /* Typography primitives */
+  .heading-1 {
+    @apply text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white to-zinc-400;
+  }
+  .heading-2 {
+    @apply text-2xl sm:text-3xl font-semibold tracking-tight text-white;
+  }
+  .text-muted {
+    @apply text-sm sm:text-base text-zinc-400 leading-relaxed;
+  }
+
+  /* Core Buttons */
+  .btn-primary {
+    @apply inline-flex h-10 sm:h-12 items-center justify-center rounded-lg bg-health-good px-6 sm:px-8 font-medium text-white shadow-lg shadow-health-good/25 transition-all hover:brightness-110 active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
+  }
+  
+  .btn-secondary {
+    @apply inline-flex h-10 sm:h-12 items-center justify-center rounded-lg border border-white/10 bg-white/5 backdrop-blur-sm px-6 sm:px-8 font-medium text-white transition-all hover:bg-white/10 active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  /* Status Badges */
+  .badge-good {
+    @apply inline-flex items-center rounded-full border border-health-good/30 bg-health-good/10 px-2.5 py-0.5 text-xs font-medium text-health-good backdrop-blur-sm;
+  }
+  .badge-warning {
+    @apply inline-flex items-center rounded-full border border-health-warning/30 bg-health-warning/10 px-2.5 py-0.5 text-xs font-medium text-health-warning backdrop-blur-sm;
+  }
+  .badge-critical {
+    @apply inline-flex items-center rounded-full border border-health-critical/30 bg-health-critical/10 px-2.5 py-0.5 text-xs font-medium text-health-critical backdrop-blur-sm;
+  }
 }

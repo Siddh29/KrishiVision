@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
-import maplibregl from 'maplibre-gl';
-import 'maplibre-gl/dist/maplibre-gl.css';
+import React, { useEffect, useState } from 'react';
+import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
 import { useAppStore } from '@/store/useAppStore';
+import type { Map } from 'leaflet';
 
 // Helper to generate a simulated NDVI grid matching our sample polygon bounds [78.0, 20.0] to [80.0, 21.5]
 const generateNDVIGrid = () => {
@@ -25,7 +26,7 @@ const generateNDVIGrid = () => {
 
       features.push({
         type: 'Feature',
-        properties: { ndviValue: ndvi },
+        properties: { ndviValue: ndvi, name: `grid-${x}-${y}` },
         geometry: {
           type: 'Polygon',
           coordinates: [[
@@ -50,52 +51,62 @@ const INITIAL_NDVI_GRID = generateNDVIGrid();
 
 const LayerToggleUI = React.memo(() => {
   const { mapLayers, toggleMapLayer } = useAppStore();
+  
   return (
-    <div className="absolute top-4 left-4 flex gap-2 z-10 p-1.5 rounded-lg border border-gray-200/50 bg-white/80 backdrop-blur-md shadow-sm">
-      <button 
-        onClick={() => toggleMapLayer('boundary')}
-        className={`px-3 py-1.5 text-xs rounded transition-colors ${mapLayers.boundary ? 'bg-emerald-100 text-emerald-800 font-medium' : 'text-gray-600 hover:bg-gray-100'}`}
-      >
-        Parcel Boundary
-      </button>
-      <button 
-        onClick={() => toggleMapLayer('ndvi')}
-        className={`px-3 py-1.5 text-xs rounded transition-colors ${mapLayers.ndvi ? 'bg-emerald-100 text-emerald-800 font-medium' : 'text-gray-600 hover:bg-gray-100'}`}
-      >
-        NDVI Index
-      </button>
-      <button 
-        onClick={() => toggleMapLayer('terrain')}
-        className={`px-3 py-1.5 text-xs rounded transition-colors ${mapLayers.terrain ? 'bg-emerald-100 text-emerald-800 font-medium' : 'text-gray-600 hover:bg-gray-100'}`}
-      >
-        Terrain
-      </button>
+    <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-[1000] w-48 sm:w-56 p-3 sm:p-4 rounded-xl border border-gray-200/50 bg-white/90 backdrop-blur-md shadow-xl flex flex-col pointer-events-auto">
+      <h3 className="text-[10px] sm:text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Map Layers</h3>
+      
+      <div className="flex items-center justify-between w-full py-1.5 sm:py-2 border-b border-gray-100/50">
+        <span className="text-xs sm:text-sm font-medium text-gray-700">Boundary</span>
+        <button 
+          onClick={() => toggleMapLayer('boundary')}
+          className={`relative inline-flex h-4 sm:h-5 w-8 sm:w-9 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none ${mapLayers.boundary ? 'bg-emerald-500' : 'bg-gray-200'}`}
+        >
+          <span className={`pointer-events-none inline-block h-3 sm:h-4 w-3 sm:w-4 transform rounded-full bg-white shadow transition duration-200 ease-in-out ${mapLayers.boundary ? 'translate-x-4 sm:translate-x-4' : 'translate-x-0.5'}`} />
+        </button>
+      </div>
+
+      <div className="flex items-center justify-between w-full py-1.5 sm:py-2 border-b border-gray-100/50">
+        <span className="text-xs sm:text-sm font-medium text-gray-700">NDVI Layer</span>
+        <button 
+          onClick={() => toggleMapLayer('ndvi')}
+          className={`relative inline-flex h-4 sm:h-5 w-8 sm:w-9 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none ${mapLayers.ndvi ? 'bg-emerald-500' : 'bg-gray-200'}`}
+        >
+          <span className={`pointer-events-none inline-block h-3 sm:h-4 w-3 sm:w-4 transform rounded-full bg-white shadow transition duration-200 ease-in-out ${mapLayers.ndvi ? 'translate-x-4 sm:translate-x-4' : 'translate-x-0.5'}`} />
+        </button>
+      </div>
+
+      <div className="flex items-center justify-between w-full py-1.5 sm:py-2">
+        <span className="text-xs sm:text-sm font-medium text-gray-700">Terrain</span>
+        <button 
+          onClick={() => toggleMapLayer('terrain')}
+          className={`relative inline-flex h-4 sm:h-5 w-8 sm:w-9 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none ${mapLayers.terrain ? 'bg-emerald-500' : 'bg-gray-200'}`}
+        >
+          <span className={`pointer-events-none inline-block h-3 sm:h-4 w-3 sm:w-4 transform rounded-full bg-white shadow transition duration-200 ease-in-out ${mapLayers.terrain ? 'translate-x-4 sm:translate-x-4' : 'translate-x-0.5'}`} />
+        </button>
+      </div>
     </div>
   );
 });
 
-const MapControlsUI = React.memo(({ mapRef }: { mapRef: React.RefObject<maplibregl.Map | null> }) => {
-  const handleZoomIn = React.useCallback(() => mapRef.current?.zoomIn(), [mapRef]);
-  const handleZoomOut = React.useCallback(() => mapRef.current?.zoomOut(), [mapRef]);
+const MapControlsUI = React.memo(({ map }: { map: Map | null }) => {
+  const handleZoomIn = React.useCallback(() => map?.zoomIn(), [map]);
+  const handleZoomOut = React.useCallback(() => map?.zoomOut(), [map]);
   
   const handleReset = React.useCallback(() => {
-    mapRef.current?.flyTo({ center: [78.9629, 20.5937], zoom: 4, essential: true });
-  }, [mapRef]);
+    map?.flyTo([20.5937, 78.9629], 4);
+  }, [map]);
   
   const handleGeolocate = React.useCallback(() => {
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition((position) => {
-        mapRef.current?.flyTo({
-          center: [position.coords.longitude, position.coords.latitude],
-          zoom: 14,
-          essential: true
-        });
+        map?.flyTo([position.coords.latitude, position.coords.longitude], 14);
       });
     }
-  }, [mapRef]);
+  }, [map]);
 
   return (
-    <div className="absolute bottom-8 right-6 flex flex-col gap-3 z-10">
+    <div className="absolute bottom-8 right-6 flex flex-col gap-3 z-[1000]">
       <button 
         onClick={handleGeolocate} 
         className="bg-white p-3 rounded-full shadow-lg hover:bg-gray-100 transition-colors flex items-center justify-center text-gray-700"
@@ -125,156 +136,114 @@ const MapControlsUI = React.memo(({ mapRef }: { mapRef: React.RefObject<maplibre
 });
 
 export default function MapView() {
-  const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<maplibregl.Map | null>(null);
+  const [map, setMap] = useState<Map | null>(null);
+  const [geoJsonData, setGeoJsonData] = useState<any>(null);
+  const { mapLayers } = useAppStore();
+  const [selectedParcel, setSelectedParcel] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Trigger loading fade out when map instance resolves
+  useEffect(() => {
+    if (map) {
+      const timer = setTimeout(() => setIsLoading(false), 600);
+      return () => clearTimeout(timer);
+    }
+  }, [map]);
 
   useEffect(() => {
-    if (map.current || !mapContainer.current) return;
-
-    const initialMap = new maplibregl.Map({
-      container: mapContainer.current,
-      style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
-      center: [78.9629, 20.5937],
-      zoom: 4,
-      interactive: true,
-      attributionControl: false,
-    });
-
-    map.current = initialMap;
-
-    initialMap.on('load', () => {
-      initialMap.addSource('sample-geojson', {
-        type: 'geojson',
-        data: '/sample.geojson'
-      });
-
-      initialMap.addLayer({
-        id: 'sample-fill',
-        type: 'fill',
-        source: 'sample-geojson',
-        paint: {
-          'fill-color': '#22c55e',
-          'fill-opacity': 0.3
-        }
-      });
-
-      initialMap.addLayer({
-        id: 'sample-border-glow',
-        type: 'line',
-        source: 'sample-geojson',
-        filter: ['==', 'name', ''],
-        layout: {
-          'line-cap': 'round',
-          'line-join': 'round'
-        },
-        paint: {
-          'line-color': '#4ade80',
-          'line-width': 8,
-          'line-blur': 4,
-          'line-opacity': 0.8
-        }
-      });
-
-      initialMap.addLayer({
-        id: 'sample-border',
-        type: 'line',
-        source: 'sample-geojson',
-        paint: {
-          'line-color': '#166534',
-          'line-width': 2
-        }
-      });
-
-      initialMap.on('click', 'sample-fill', (e) => {
-        const feature = e.features?.[0];
-        if (feature && feature.properties?.name) {
-          const name = feature.properties.name;
-          initialMap.setFilter('sample-border-glow', ['==', 'name', name]);
-          initialMap.setPaintProperty('sample-fill', 'fill-opacity', ['case', ['==', ['get', 'name'], name], 0.5, 0.3]);
-          initialMap.setPaintProperty('sample-border', 'line-width', ['case', ['==', ['get', 'name'], name], 3, 2]);
-        }
-      });
-
-      // Efficient setup of NDVI layer utilizing the cached module-level grid to avoid recomputations
-      initialMap.addSource('ndvi-source', {
-        type: 'geojson',
-        data: INITIAL_NDVI_GRID as any
-      });
-
-      initialMap.addLayer({
-        id: 'ndvi-layer',
-        type: 'fill',
-        source: 'ndvi-source',
-        layout: {
-          visibility: 'none'
-        },
-        paint: {
-          'fill-color': [
-            'step',
-            ['get', 'ndviValue'],
-            '#ef4444', 0.3,
-            '#facc15', 0.6,
-            '#22c55e'
-          ],
-          'fill-opacity': 0.75,
-          'fill-outline-color': 'rgba(255,255,255,0.1)'
-        }
-      }, 'sample-border');
-
-      initialMap.on('mouseenter', 'sample-fill', () => {
-        initialMap.getCanvas().style.cursor = 'pointer';
-      });
-
-      initialMap.on('mouseleave', 'sample-fill', () => {
-        initialMap.getCanvas().style.cursor = '';
-      });
-    });
-
-    const handleResize = () => {
-      initialMap.resize();
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      initialMap.remove();
-      map.current = null;
-    };
+    fetch('/sample.geojson')
+      .then(res => res.json())
+      .then(data => setGeoJsonData(data))
+      .catch(err => console.error("Could not load sample.geojson", err));
   }, []);
 
-  // Performance Optimization: Subscribe directly via Zustand outside of React component rendering lifecycle.
-  // This causes MapView to perfectly bypass React DOM reconciliation updates natively when just mapping map-state visibilities, removing 100% of DOM flashes.
-  useEffect(() => {
-    const processState = (state: any) => {
-      if (!map.current) return;
-      const currentMap = map.current;
-      
-      const boundaryVisibility = state.mapLayers.boundary ? 'visible' : 'none';
-      if (currentMap.getLayer('sample-fill')) {
-        currentMap.setLayoutProperty('sample-fill', 'visibility', boundaryVisibility);
-        currentMap.setLayoutProperty('sample-border', 'visibility', boundaryVisibility);
-        currentMap.setLayoutProperty('sample-border-glow', 'visibility', boundaryVisibility);
-      }
+  const getStyleForNDVI = (feature: any) => {
+    const ndvi = feature.properties.ndviValue;
+    let color = '#ef4444'; // Red < 0.3
+    if (ndvi >= 0.6) color = '#22c55e'; // Green
+    else if (ndvi >= 0.3) color = '#facc15'; // Yellow
 
-      if (currentMap.getLayer('ndvi-layer')) {
-        currentMap.setLayoutProperty('ndvi-layer', 'visibility', state.mapLayers.ndvi ? 'visible' : 'none');
-      }
+    return {
+      fillColor: color,
+      fillOpacity: 0.75,
+      color: 'rgba(255,255,255,0.1)',
+      weight: 1
     };
+  };
 
-    // Bootstrap initial render state 
-    processState(useAppStore.getState());
-    
-    // Hook map bindings smoothly straight to the store mutations
-    const unsubscribe = useAppStore.subscribe(processState);
-    return () => unsubscribe();
-  }, []);
+  const getStyleForBoundary = (feature: any) => {
+    const isSelected = selectedParcel === feature.properties?.name;
+    return {
+      fillColor: '#22c55e',
+      fillOpacity: isSelected ? 0.5 : 0.3,
+      color: isSelected ? '#4ade80' : '#166534', // Green border
+      weight: isSelected ? 4 : 2,                 // Thicker when selected
+      className: 'transition-all duration-300'
+    };
+  };
+
+  const onEachFeature = (feature: any, layer: any) => {
+    layer.on({
+      click: () => {
+        if (feature.properties?.name) {
+          setSelectedParcel(feature.properties.name);
+        }
+      },
+      mouseover: (e: any) => {
+        e.target.setStyle({ weight: 3 });
+      },
+      mouseout: (e: any) => {
+        const isSelected = selectedParcel === feature.properties?.name;
+        e.target.setStyle({ weight: isSelected ? 4 : 2 });
+      }
+    });
+  };
 
   return (
-    <div className="w-full h-full relative bg-gray-50 overflow-hidden rounded-t-xl z-0">
-      <div ref={mapContainer} className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing" />
+    <div className="w-full h-full relative bg-zinc-100 overflow-hidden z-0">
+      
+      {/* High-end Loading Overlay */}
+      {isLoading && (
+        <div className="absolute inset-0 z-[2000] flex items-center justify-center bg-white/70 backdrop-blur-md transition-opacity duration-500">
+          <div className="flex flex-col items-center gap-4 p-6 sm:p-8 rounded-3xl bg-white/90 shadow-2xl border border-gray-100/50">
+             <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full border-4 border-emerald-500 border-t-emerald-100 animate-spin" />
+             <p className="text-xs sm:text-sm font-bold text-gray-500 uppercase tracking-widest animate-pulse">Initializing Layout</p>
+          </div>
+        </div>
+      )}
+
+      <MapContainer 
+        center={[20.5937, 78.9629]} 
+        zoom={4} 
+        zoomControl={false}
+        className={`absolute inset-0 w-full h-full z-0 transition-opacity duration-1000 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+        ref={setMap}
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+          url="https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+        />
+
+        {mapLayers.ndvi && (
+          <GeoJSON 
+            data={INITIAL_NDVI_GRID as any} 
+            style={getStyleForNDVI} 
+          />
+        )}
+
+        {mapLayers.boundary && geoJsonData && (
+          <GeoJSON 
+            data={geoJsonData} 
+            style={getStyleForBoundary} 
+            onEachFeature={onEachFeature}
+            key={selectedParcel || 'unselected'} // Trigger re-render of styles cleanly alongside interaction
+          />
+        )}
+      </MapContainer>
+      
+      {/* UI Overlays */}
       <LayerToggleUI />
-      <MapControlsUI mapRef={map} />
+      <MapControlsUI map={map} />
     </div>
   );
 }

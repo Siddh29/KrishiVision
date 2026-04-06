@@ -1,20 +1,6 @@
-"use client";
-
 import React from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
-import dynamic from "next/dynamic";
-
-const MapView = dynamic(() => import("@/components/MapView"), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-full flex flex-col items-center justify-center bg-black/20 border border-white/10 rounded-t-xl text-zinc-500">
-      <div className="animate-pulse flex flex-col items-center gap-3">
-        <div className="w-8 h-8 rounded-full border-2 border-white/20 border-t-white/80 animate-spin"></div>
-        <p>Initializing Map Engine...</p>
-      </div>
-    </div>
-  )
-});
+import MapWrapper from "@/components/MapWrapper";
 
 export default function MapPage() {
   return (
@@ -43,7 +29,7 @@ export default function MapPage() {
         
         {/* Map Box rendered tightly and flawlessly rounded on huge screens */}
         <div className="flex-1 w-full min-h-0 relative z-0 rounded-t-2xl sm:rounded-t-[32px] overflow-hidden border border-white/10 bg-zinc-900 shadow-[0_-8px_30px_-15px_rgba(0,0,0,0.5)]">
-          <MapView />
+          <MapWrapper />
         </div>
         
       </div>
